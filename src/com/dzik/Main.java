@@ -12,6 +12,7 @@ public class Main {
             Input +=temp;
             Input +="\n";
         }
+
         System.out.println(Input);
 
         Skaner sk = new Skaner(Input);

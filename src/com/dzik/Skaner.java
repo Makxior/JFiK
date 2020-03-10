@@ -1,73 +1,98 @@
 package com.dzik;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class Skaner {
+    public static Map<String,String> Keyword_value = new TreeMap<>();
     public Skaner(String input) { //konstruktor i jedyna metoda
+        {
+        Keyword_value.put( "{", "BLPAREN");
+        Keyword_value.put( "}","BRPAREN");
+        Keyword_value.put( "[", "SLPAREN");
+        Keyword_value.put( "]","SRPAREN");
+        Keyword_value.put( "$schema","SCHEMA");
+        Keyword_value.put( "$id","ID");
+        Keyword_value.put( ":","COLON");
+        Keyword_value.put(" ","SPACE");
+        Keyword_value.put(",","COMMA");
+        Keyword_value.put("title","TITLE");
+        Keyword_value.put("type","TYPE");
+        Keyword_value.put("properties","PROPERTIES");
+        Keyword_value.put("description","DESCRIPTION");
+        Keyword_value.put("required","REQUIRED");
+        Keyword_value.put("minLength","MINLENGTH");
+        Keyword_value.put("maxLength","MAXLENGTH");
+        Keyword_value.put("minimum","MINIMUM");
+        Keyword_value.put("maximum","MAXIMUM");
+        Keyword_value.put("$ref","REF");
+        Keyword_value.put("definitions","DEFINITIONS"); }
+
         List<Token> tokens = lex(input); // lista tokenow ktore zwroci
         for(Token t : tokens) {
-            System.out.println(t); //tutaj na razie wyswietlanie
+            System.out.print(t.keyword+" "); //tutaj na razie wyswietlanie
         }
     }
-    String[] Value_specification = {"link","string","number","stringTable","ref"}; //mozliwe wartoscsi ktore przyjmuje value, inne to błąd
-    public enum KEYWORD { //możliwe nazwy tokenow
-        LPAREN, RPAREN, COLON, COMMA,SPACE, ATOM, ID﻿, SCHEMA﻿, TITLE, TYPE,  PROPERTIES, DESCRIPTION ,REQUIRED, MINIMUM,  MAXIMUM, MINLENGTH, MAXLENGTH, ENUM, DEFINITIONS, REF﻿
-    }
+
     public static class Token { //klasa token
-        public final KEYWORD keyword;
+        public final String keyword;
         public final String value;
-        public Token(KEYWORD type, String value) {
+        public Token( String value,String type) {
             this.keyword = type;
             this.value = value;
         }
-        public String toString() { //jesli token to wartosc(value) a nie keyword
-            if(keyword == KEYWORD.ATOM) {
-                return "V<" + value + ">";
-            }
-            return keyword.toString();
-        }
-    }
-
-    public static String getAtom(String s, int i) { //tutaj wartosc value nie do konca ogarniam po co
-        int j = i;
-        for( ; j < s.length(); ) {
-            if(Character.isLetter(s.charAt(j))) {
-                j++;
-            } else {
-                return s.substring(i, j);
-            }
-        }
-        return s.substring(i, j);
     }
 
     public static List<Token> lex(String input) { //tutaj najważniejsza funkcja
-        List<Token> result = new ArrayList<Token>();
-        for(int i = 0; i < input.length(); ) { //zwiekszamy w zaleznosci od dlugosci odczytanego tokena
-            if(input.charAt(i) == 0) //tutaj testujemy czy to nie jest
+        List<Token> result = new ArrayList<>();
+        String temp="";
+        for(int i = 0; i < input.length()-2; ) { //zwiekszamy w zaleznosci od dlugosci odczytanego tokena
+            System.out.println(i);
+            temp="";
+           if(input.charAt(i) == '{' || input.charAt(i) == '}' || input.charAt(i) == '[' || input.charAt(i) ==']' ||input.charAt(i) ==' ' || input.charAt(i) ==':'|| input.charAt(i)==','){
+                result.add(new Token(Character.toString(input.charAt(i)),Keyword_value.get(Character.toString(input.charAt(i)))));
+                i++;
+            }
+           else if(input.charAt(i) == '\n'){
+               i++;
+           }
+           else if (Character.isDigit(input.charAt(i))){
+               result.add(new Token(Character.toString(input.charAt(i)), "NUMBER"));
+               i++;
+            }
+           else if(input.charAt(i) == '"'){
+               while(input.charAt(i+1) != '"'){
+                   temp +=input.charAt(i+1);
+                   i++;
+               }
+               i+=2;
+               System.out.println(temp);
+               if(Keyword_value.get(temp) != null)
+               {
+                   result.add(new Token(temp, Keyword_value.get(temp)));
+               }
+               else{
+                   if(temp.matches("^(https?|ftp)://.*$")){
+                       result.add(new Token(temp, "LINK"));
+                   }
+                   else if(temp.matches("#/.*$"))
+                   {
+                       result.add(new Token(temp, "ADDRESS"));
+                   }
+                   else{
+                       result.add(new Token(temp, "STRING"));
+                   }
+               }
+           }
+           else{
+               System.out.println("Error in reading input in Skaner");
+               break;
+           }
 
         }
-        return result;
+        result.add(new Token("eof", "EOF"));
+        return result; //cyfry i rozne value
     }
 }
-/*            switch(input.charAt(i)) {
-                case '(':
-                    result.add(new Token(Type.LPAREN, "("));
-                    i++;
-                    break;
-                case ')':
-                    result.add(new Token(Type.RPAREN, ")"));
-                    i++;
-                    break;
-                default:
-                    if(Character.isWhitespace(input.charAt(i))) {
-                        i++;
-                    } else {
-                        String atom = getAtom(input, i);
-                        i += atom.length();
-                        result.add(new Token(Type.ATOM, atom));
-                    }
-                    break;
-            }
-
- */
