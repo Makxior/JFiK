@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 public class Skaner {
     public static Map<String,String> Keyword_value = new TreeMap<>();
+    public List<Token> tokens;
     public Skaner(String input) { //konstruktor i jedyna metoda
         {
         Keyword_value.put( "{", "BLPAREN");
@@ -30,10 +31,7 @@ public class Skaner {
         Keyword_value.put("$ref","REF");
         Keyword_value.put("definitions","DEFINITIONS"); }
 
-        List<Token> tokens = lex(input); // lista tokenow ktore zwroci
-        for(Token t : tokens) {
-            System.out.print(t.keyword+" "); //tutaj na razie wyswietlanie
-        }
+        tokens = lex(input); // lista tokenow ktore zwroci
     }
 
     public static class Token { //klasa token
@@ -49,7 +47,6 @@ public class Skaner {
         List<Token> result = new ArrayList<>();
         String temp="";
         for(int i = 0; i < input.length()-2; ) { //zwiekszamy w zaleznosci od dlugosci odczytanego tokena
-            System.out.println(i);
             temp="";
            if(input.charAt(i) == '{' || input.charAt(i) == '}' || input.charAt(i) == '[' || input.charAt(i) ==']' ||input.charAt(i) ==' ' || input.charAt(i) ==':'|| input.charAt(i)==','){
                 result.add(new Token(Character.toString(input.charAt(i)),Keyword_value.get(Character.toString(input.charAt(i)))));
@@ -68,13 +65,12 @@ public class Skaner {
                    i++;
                }
                i+=2;
-               System.out.println(temp);
                if(Keyword_value.get(temp) != null)
                {
                    result.add(new Token(temp, Keyword_value.get(temp)));
                }
                else{
-                   if(temp.matches("^(https?|ftp)://.*$")){
+                   if(temp.matches("^(https?|ftp)://.*$")){ //tutaj mozna te regexy ulepszyc
                        result.add(new Token(temp, "LINK"));
                    }
                    else if(temp.matches("#/.*$"))
@@ -93,6 +89,6 @@ public class Skaner {
 
         }
         result.add(new Token("eof", "EOF"));
-        return result; //cyfry i rozne value
+        return result;
     }
 }
