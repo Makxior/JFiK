@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) throws Exception{
         String temp;
         String Input="";
-        File file = new File("C:\\Users\\Grzdz\\IdeaProjects\\JFiKProjekt1\\src\\com\\dzik\\input.txt");
+        File file = new File("src\\com\\dzik\\input.txt");
         BufferedReader br = new BufferedReader(new FileReader(file));
         while (( temp = br.readLine()) != null){
             Input +=temp;
@@ -18,5 +18,6 @@ public class Main {
         Skaner sk = new Skaner(Input);
         Parser pr = new Parser(sk);
         pr.start();
+        pr.result();
     }
 }
