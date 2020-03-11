@@ -29,6 +29,7 @@ public class Skaner {
         Keyword_value.put("minimum","MINIMUM");
         Keyword_value.put("maximum","MAXIMUM");
         Keyword_value.put("$ref","REF");
+        Keyword_value.put("enum","ENUM");
         Keyword_value.put("definitions","DEFINITIONS"); }
 
         tokens = lex(input); // lista tokenow ktore zwroci
