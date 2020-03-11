@@ -17,12 +17,166 @@ public class Parser {
             System.out.println("Brak błędów");
     }
 
+    private int idCheck(int i){
+        if(tokens.get(i+1).keyword == "COLON"){
+            i++;
+            if(tokens.get(i+1).keyword == "SPACE"){
+                i++;
+                if(tokens.get(i+1).keyword == "LINK"){
+                    i++;
+                    if(tokens.get(i+1).keyword == "COMMA"){
+                        i++;
+                        return i;
+                    }
+                    else
+                        System.out.println("idCheck error");
+                }
+            }
+        }
+        System.out.println("idCheck error");
+        return tokens.size()+1;
+    }
+
+    private int schemaCheck(int i){
+            if(tokens.get(i+1).keyword == "COLON"){
+                i++;
+                if(tokens.get(i+1).keyword == "SPACE"){
+                    i++;
+                    if(tokens.get(i+1).keyword == "LINK"){
+                        i++;
+                        if(tokens.get(i+1).keyword == "COMMA"){
+                            i++;
+                            return i;
+                        }
+                    }
+                    else
+                        System.out.println("schemaCheck error");
+                }
+            }
+
+        System.out.println("schemaCheck error");
+        return tokens.size()+1;
+    }
+    private int titleCheck(int i){
+        if(tokens.get(i+1).keyword == "COLON"){
+            i++;
+            if(tokens.get(i+1).keyword == "SPACE"){
+                i++;
+                if(tokens.get(i+1).keyword == "STRING"){
+                    i++;
+                    if(tokens.get(i+1).keyword == "COMMA"){
+                        i++;
+                        return i;
+                    }
+                }
+                else
+                    System.out.println("titleCheck error");
+            }
+        }
+
+        System.out.println("titleCheck error");
+        return tokens.size()+1;
+    }
+
+    private int reqDeepCheck(int i){
+        if(tokens.get(i+1).keyword == "COMMA"){
+            i++;
+            if(tokens.get(i+1).keyword == "SPACE"){
+                i++;
+                if(tokens.get(i+1).keyword == "STRING"){
+                    i++;
+                    if(tokens.get(i+1).keyword == "SRPAREN"){
+                        i++;
+                        return i;
+                    }
+
+                    else if(tokens.get(i+1).keyword == "COMMA"){
+                        i = reqDeepCheck(i);
+                        return i;
+                    }
+
+                }
+            }
+        }
+        System.out.println("reqDeepCheck error");
+
+        return tokens.size()+1;
+    }
+
+    private int reqCheck(int i){
+        String temp = tokens.get(i+1).keyword;
+        if(tokens.get(i+1).keyword == "COLON"){
+            i++;
+            temp = tokens.get(i+1).keyword;
+            if(tokens.get(i+1).keyword == "SPACE"){
+                i++;
+                temp = tokens.get(i+1).keyword;
+                if(tokens.get(i+1).keyword == "SLPAREN"){
+                    i++;
+                    temp = tokens.get(i+1).keyword;
+                    if(tokens.get(i+1).keyword == "STRING"){
+                        i++;
+                        temp = tokens.get(i+1).keyword;
+                        if(tokens.get(i+1).keyword == "SRPAREN"){
+                            i++;
+                            return i;
+                        }
+                        //rekurencja - sprawdzanie poprawnosci COMMA->SPACE->STRING wiele razy
+                        else if(tokens.get(i+1).keyword == "COMMA"){
+                                      reqDeepCheck(--i);
+                        }
+                    }
+                }
+                else
+                    System.out.println("reqCheck error");
+            }
+        }
+
+        System.out.println("reqCheck error");
+        return tokens.size()+1;
+    }
+
+    private int typeCheck(int i){
+        if(tokens.get(i+1).keyword == "COLON"){
+            i++;
+            if(tokens.get(i+1).keyword == "SPACE"){
+                i++;
+                if(tokens.get(i+1).keyword == "STRING"){
+                    i++;
+                    if(tokens.get(i+1).keyword == "COMMA"){
+                        i++;
+                        return i;
+                    }
+                    else
+                        System.out.println("typeCheck error");
+                }
+            }
+        }
+        System.out.println("typeCheck error");
+        return tokens.size()+1;
+
+    }
+
+
+
     private int check() {
+
 
         for(int i = 0; i < tokens.size(); i++)
         {
-            if(tokens.get(i).keyword  == "id")
-                System.out.println("chuj dupa cyce");
+
+            switch(tokens.get(i).keyword)
+            {
+                case "ID": i = idCheck(i); break;
+                case "SCHEMA": i = schemaCheck(i); break;
+                case "TITLE": i = titleCheck(i); break;
+                case "REQUIRED": i = reqCheck(i); break;
+                case "TYPE": i = typeCheck(i); break;
+                case "PROPERTIES": break;
+                case "DEFINITIONS": break;
+                default: break;
+
+            }
 
         }
 
@@ -52,7 +206,7 @@ public class Parser {
         //sprawdzenie poprawnosci start i end
         if(tokens.get(0).keyword != "BLPAREN" || tokens.get(tokens.size()-1).keyword != "EOF"){
             errors.add("Brakuje \"{\" na początku programu lub EOF na końcu ");
-            return 0;
+            //return 0;
         }
 
         //sprawdzenie liczby klamr { }
@@ -65,7 +219,7 @@ public class Parser {
         }
         if(counter !=0){
             errors.add("Brakuje \"{\" lub \"}\"");
-            return 0;
+            //return 0;
         }
 
 
@@ -79,8 +233,11 @@ public class Parser {
         }
         if(counter !=0){
             errors.add("Brakuje \"[\" lub \"]\"");
-            return 0;
+            //return 0;
         }
+
+
+
         check();
         return 0;
     }
