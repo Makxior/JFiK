@@ -6,6 +6,7 @@ import java.util.List;
 public class Parser {
     List<Skaner.Token> tokens;
     List<String> errors = new ArrayList<String>();
+    List<String> elementsList = new ArrayList<>();
     public Parser(Skaner sk) {
         this.tokens = sk.tokens;
     }
@@ -24,19 +25,23 @@ public class Parser {
                 i++;
                 if(tokens.get(i+1).keyword == "LINK"){
                     i++;
-                    if(tokens.get(i+1).keyword == "COMMA"){
-                        i++;
-                        return i;
+                    if(elementsList.contains(tokens.get(i+2).keyword)){
+                        if(tokens.get(i+1).keyword == "COMMA"){
+                            i++;
+                            return i;
+
+                        }
+                        else
+                            System.out.println("idCheck error");
                     }
-                    else
-                        System.out.println("idCheck error");
+                    else return i;
+
                 }
             }
         }
         System.out.println("idCheck error");
         return tokens.size()+1;
     }
-
     private int schemaCheck(int i){
             if(tokens.get(i+1).keyword == "COLON"){
                 i++;
@@ -44,10 +49,14 @@ public class Parser {
                     i++;
                     if(tokens.get(i+1).keyword == "LINK"){
                         i++;
-                        if(tokens.get(i+1).keyword == "COMMA"){
-                            i++;
-                            return i;
+                        if(elementsList.contains(tokens.get(i+2).keyword)){
+                            if(tokens.get(i+1).keyword == "COMMA"){
+                                i++;
+                                return i;
+                            }
                         }
+                        else return i;
+
                     }
                     else
                         System.out.println("schemaCheck error");
@@ -64,10 +73,13 @@ public class Parser {
                 i++;
                 if(tokens.get(i+1).keyword == "STRING"){
                     i++;
-                    if(tokens.get(i+1).keyword == "COMMA"){
-                        i++;
-                        return i;
-                    }
+                    if(elementsList.contains(tokens.get(i+2).keyword)) {
+                        if (tokens.get(i + 1).keyword == "COMMA") {
+                            i++;
+                            return i;
+                        }
+                    }else return i;
+
                 }
                 else
                     System.out.println("titleCheck error");
@@ -124,15 +136,28 @@ public class Parser {
                         //rekurencja - sprawdzanie poprawnosci COMMA->SPACE->STRING wiele razy
                         else if(tokens.get(i+1).keyword == "COMMA"){
                                       reqDeepCheck(--i);
+                                      if(tokens.get(i+1).keyword == "SRPAREN"){
+                                          i++;
+                                          if(tokens.get(i+2).keyword == "COMMA"){
+                                              if(tokens.get(i+1).keyword == "COMMA"){
+                                                  i++;
+                                                  return i;
+
+                                              }
+                                              else
+                                                  System.out.println("reqCheck1 error");
+
+                                          }
+                                      }
                         }
                     }
                 }
                 else
-                    System.out.println("reqCheck error");
+                    System.out.println("reqCheck2 error");
             }
         }
 
-        System.out.println("reqCheck error");
+        System.out.println("reqCheck3 error");
         return tokens.size()+1;
     }
 
@@ -143,12 +168,15 @@ public class Parser {
                 i++;
                 if(tokens.get(i+1).keyword == "STRING"){
                     i++;
-                    if(tokens.get(i+1).keyword == "COMMA"){
-                        i++;
-                        return i;
+                    if(elementsList.contains(tokens.get(i+2).keyword)){
+                        if(tokens.get(i+1).keyword == "COMMA"){
+                            i++;
+                            return i;
+                        }
+                        else
+                            System.out.println("typeCheck error");
                     }
-                    else
-                        System.out.println("typeCheck error");
+
                 }
             }
         }
@@ -157,6 +185,40 @@ public class Parser {
 
     }
 
+    private int propCheck(int i){
+        if(tokens.get(i+1).keyword == "COLON"){
+            i++;
+            if(tokens.get(i+1).keyword == "SPACE"){
+                i++;
+                if(tokens.get(i+1).keyword == "BLPAREN"){
+                    i++;
+
+                }
+            }
+        }
+        System.out.println("propCheck error");
+        return tokens.size()+1;
+
+    }
+
+    private int defCheck(int i){
+        if(tokens.get(i+1).keyword == "STRING"){
+            i++;
+            if(tokens.get(i+1).keyword == "COLON"){
+                i++;
+                if(tokens.get(i+1).keyword == "SPACE"){
+                    i++;
+                    if(tokens.get(i+1).keyword == "BLPAREN"){
+                        i++;
+                        //cos wielokrotnie
+                    }
+                }
+            }
+        }
+        System.out.println("propCheck error");
+        return tokens.size()+1;
+
+    }
 
 
     private int check() {
@@ -172,8 +234,8 @@ public class Parser {
                 case "TITLE": i = titleCheck(i); break;
                 case "REQUIRED": i = reqCheck(i); break;
                 case "TYPE": i = typeCheck(i); break;
-                case "PROPERTIES": break;
-                case "DEFINITIONS": break;
+                case "PROPERTIES": i = propCheck(i); break;
+                case "DEFINITIONS": i = defCheck(i); break;
                 default: break;
 
             }
@@ -185,6 +247,16 @@ public class Parser {
 
 
     public int start() {
+
+        elementsList.add("ID");
+        elementsList.add("SCHEMA");
+        elementsList.add("TITLE");
+        elementsList.add("REQUIRED");
+        elementsList.add("TYPE");
+        elementsList.add("PROPERTIES");
+        elementsList.add("DEFINITIONS");
+
+
 
         System.out.println("\nMoje rozwiaznie");
 
