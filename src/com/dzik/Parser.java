@@ -100,7 +100,7 @@ public class Parser {
                     i++;
                     if(tokens.get(i+1).keyword == "SRPAREN"){
                         i++;
-                        return i;
+                        return --i;
                     }
 
                     else if(tokens.get(i+1).keyword == "COMMA"){
@@ -136,10 +136,10 @@ public class Parser {
                         }
                         //rekurencja - sprawdzanie poprawnosci COMMA->SPACE->STRING wiele razy
                         else if(tokens.get(i+1).keyword == "COMMA"){
-                                      reqDeepCheck(--i);
+                                      i = reqDeepCheck(i);
                                       if(tokens.get(i+1).keyword == "SRPAREN"){
-                                          i++;
-                                          if(tokens.get(i+2).keyword == "COMMA"){
+
+                                          if(elementsList.contains(tokens.get(i+2).keyword)){
                                               if(tokens.get(i+1).keyword == "COMMA"){
                                                   i++;
                                                   return i;
