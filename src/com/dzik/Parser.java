@@ -7,6 +7,7 @@ public class Parser {
     List<Skaner.Token> tokens;
     List<String> errors = new ArrayList<String>();
     List<String> elementsList = new ArrayList<>();
+    List<String> propList = new ArrayList<>();
     public Parser(Skaner sk) {
         this.tokens = sk.tokens;
     }
@@ -185,41 +186,337 @@ public class Parser {
 
     }
 
-    private int propCheck(int i){
+    private int defCheck(int i){
         if(tokens.get(i+1).keyword == "COLON"){
             i++;
             if(tokens.get(i+1).keyword == "SPACE"){
                 i++;
                 if(tokens.get(i+1).keyword == "BLPAREN"){
                     i++;
+                    if(tokens.get(i+1).keyword.equals("STRING")){
+                        i++;
+                        if(tokens.get(i+1).keyword.equals("COLON")){
+                            i++;
+                            if(tokens.get(i+1).keyword.equals("SPACE")){
+                                i++;
+                                if(tokens.get(i+1).keyword.equals("BLPAREN")){
+                                    i++;
+                                    if(tokens.get(i+1).keyword.equals("TYPE") || tokens.get(i+1).keyword.equals("PROPERTIES")){
+                                        defDeepCheck(i);
+                                        if(tokens.get(i+1).keyword.equals("BRPAREN")){
+                                            i++;
+                                            if(elementsList.contains(tokens.get(i+2).keyword)){
+                                                if(tokens.get(i+1).keyword.equals("COMMA")){
+                                                    i++;
+                                                    return i;
+
+                                                }
+                                                else
+                                                    System.out.println("defCheck error");
+                                            }
+                                            else return i;
+
+                                        }
+
+                                    }
+
+
+                                }
+
+                            }
+                        }
+                    }
 
                 }
             }
         }
-        System.out.println("propCheck error");
+        System.out.println("defCheck error");
         return tokens.size()+1;
 
     }
-
-    private int defCheck(int i){
-        if(tokens.get(i+1).keyword == "STRING"){
+    private int defDeepCheck(int i){
+        if(tokens.get(i+1).keyword.equals("TYPE")){
             i++;
+            if(tokens.get(i+1).keyword.equals("COLON")){
+                i++;
+                if(tokens.get(i+1).keyword.equals("SPACE")){
+                    i++;
+                    if(tokens.get(i+1).keyword.equals("STRING")){
+
+                    }
+                }
+            }
+
+        }else{
+            i++;
+            propCheck(i);
+
+        }
+
+        return tokens.size()+1;
+    }
+
+    private int propCheck(int i){
+
             if(tokens.get(i+1).keyword == "COLON"){
                 i++;
                 if(tokens.get(i+1).keyword == "SPACE"){
                     i++;
                     if(tokens.get(i+1).keyword == "BLPAREN"){
                         i++;
-                        //cos wielokrotnie
+                        if(tokens.get(i+1).keyword.equals("STRING")){
+                            i++;
+                            if(tokens.get(i+1).keyword.equals("COLON")){
+                                i++;
+                                if(tokens.get(i+1).keyword.equals("SPACE")){
+                                    i++;
+                                    if(tokens.get(i+1).keyword.equals("BLPAREN")) {
+                                        i++;
+                                        i = propMultiChoice(i);
+                                        if (tokens.get(i + 1).keyword.equals("BRPAREN")) {
+                                            i++;
+                                            if (elementsList.contains(tokens.get(i + 2).keyword)) {
+                                                if (tokens.get(i + 1).keyword.equals("COMMA")) {
+                                                    i++;
+                                                    return i;
+                                                }
+                                            }
+
+
+                                        } else if (!tokens.get(i + 1).keyword.equals("BRPAREN")) {
+                                            //run seperate fun
+                                        }
+                                    }
+                                }
+
+                            }
+                            }
                     }
                 }
             }
-        }
+
         System.out.println("propCheck error");
         return tokens.size()+1;
 
     }
 
+    private int propMultiChoice(int i){
+
+        switch(tokens.get(i+1).keyword)
+        {
+            case "TYPE": i = propType(i);return i;
+            case "DESCRIPTION": i = propDesc(i);return i;
+            case "MINIMUM": i = propMin(i);return i;
+            case "MAXIMUM": i = propMax(i);return i;
+            case "MINLENGTH": i = propMinLen(i);return i;
+            case "MAXLENGTH": i = propMaxLen(i);return i;
+            case "ENUM": i = propEnum(i);return i;
+            case "REF": i = propRef(i);return i;
+            default: break;
+
+        }
+
+        return tokens.size()+1;
+    }
+
+    private int propType(int i){
+        if(tokens.get(i+1).keyword.equals("COLON")) {
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
+                i++;
+                if(tokens.get(i+1).keyword.equals("STRING")){
+                    i++;
+                    if (propList.contains(tokens.get(i + 2).keyword)) {
+                        if(tokens.get(i+1).keyword.equals("COMMA")){
+                            i++;
+                            return i;
+                        }
+                    }else {
+                        return i;
+                    }
+
+                }
+            }
+        }
+        return tokens.size()+1;
+    }
+
+    private int propDesc(int i){
+        if(tokens.get(i+1).keyword.equals("COLON")) {
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
+                i++;
+                if(tokens.get(i+1).keyword.equals("STRING")){
+                    i++;
+                    if (propList.contains(tokens.get(i + 2).keyword)) {
+                        if(tokens.get(i+1).keyword.equals("COMMA")){
+                            i++;
+                            return i;
+                        }
+                    }else {
+                        return i;
+                    }
+
+                }
+            }
+        }
+        return tokens.size()+1;
+    }
+    private int propMin(int i){
+        if(tokens.get(i+1).keyword.equals("COLON")) {
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
+                i++;
+                if(tokens.get(i+1).keyword.equals("NUMBER")){
+                    i++;
+                    if (propList.contains(tokens.get(i + 2).keyword)) {
+                        if(tokens.get(i+1).keyword.equals("COMMA")){
+                            i++;
+                            return i;
+                        }
+                    }else {
+                        return i;
+                    }
+
+                }
+            }
+        }
+        return tokens.size()+1;
+    }
+    private int propMax(int i){
+        if(tokens.get(i+1).keyword.equals("COLON")) {
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
+                i++;
+                if(tokens.get(i+1).keyword.equals("NUMBER")){
+                    i++;
+                    if (propList.contains(tokens.get(i + 2).keyword)) {
+                        if(tokens.get(i+1).keyword.equals("COMMA")){
+                            i++;
+                            return i;
+                        }
+                    }else {
+                        return i;
+                    }
+
+                }
+            }
+        }
+        return tokens.size()+1;
+    }
+    private int propMinLen(int i){
+        if(tokens.get(i+1).keyword.equals("COLON")) {
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
+                i++;
+                if(tokens.get(i+1).keyword.equals("NUMBER")){
+                    i++;
+                    if (propList.contains(tokens.get(i + 2).keyword)) {
+                        if(tokens.get(i+1).keyword.equals("COMMA")){
+                            i++;
+                            return i;
+                        }
+                    }else {
+                        return i;
+                    }
+
+                }
+            }
+        }
+        return tokens.size()+1;
+    }
+    private int propMaxLen(int i){
+        if(tokens.get(i+1).keyword.equals("COLON")) {
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
+                i++;
+                if(tokens.get(i+1).keyword.equals("NUMBER")){
+                    i++;
+                    if (propList.contains(tokens.get(i + 2).keyword)) {
+                        if(tokens.get(i+1).keyword.equals("COMMA")){
+                            i++;
+                            return i;
+                        }
+                    }else {
+                        return i;
+                    }
+
+                }
+            }
+        }
+        return tokens.size()+1;
+    }
+    private int propEnum(int i){
+        if(tokens.get(i+1).keyword.equals("COLON")) {
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
+                i++;
+                if(tokens.get(i+1).keyword.equals("SLPAREN")){
+                    i++;
+                    if(tokens.get(i+1).keyword.equals("STRING")){
+                        i++;
+                        if(tokens.get(i+1).keyword.equals("COMMA")){
+                            i = propEnum2(i);
+                           }else if(tokens.get(i+1).keyword.equals("SRPAREN")){
+                                     i++;
+                                        if (elementsList.contains(tokens.get(i + 2).keyword)) {
+                                              if (tokens.get(i + 1).keyword.equals("COMMA")) {
+                                                  i++;
+                                                    return i;
+                                                    }
+                                                }
+                                         }
+                    }
+
+
+                }
+            }
+        }
+        return tokens.size()+1;
+    }
+    private int propRef(int i){
+        if(tokens.get(i+1).keyword.equals("COLON")) {
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
+                i++;
+                if(tokens.get(i+1).keyword.equals("ADDRESS")){
+                    i++;
+                    if (propList.contains(tokens.get(i + 2).keyword)) {
+                        if(tokens.get(i+1).keyword.equals("COMMA")){
+                            i++;
+                            return i;
+                        }
+                    }else {
+                        return i;
+                    }
+
+                }
+            }
+        }
+        return tokens.size()+1;
+    }
+
+    private int propEnum2(int i){
+
+        if(tokens.get(i+1).keyword.equals("COMMA")) {
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")) {
+                i++;
+                if(tokens.get(i+1).keyword.equals("STRING")) {
+                    i++;
+                    if(tokens.get(i+1).keyword.equals("COMMA")){
+                        propEnum2(i);
+                    }else {
+                        return i;
+                    }
+                }
+
+            }
+        }
+
+
+        return tokens.size()+1;
+    }
 
     private int check() {
 
@@ -255,6 +552,16 @@ public class Parser {
         elementsList.add("TYPE");
         elementsList.add("PROPERTIES");
         elementsList.add("DEFINITIONS");
+
+        propList.add("TYPE");
+        propList.add("DESCRIPTION");
+        propList.add("MINIMUM");
+        propList.add("MAXIMUM");
+        propList.add("MINLENGTH");
+        propList.add("MAXLENGTH");
+        propList.add("ENUM");
+        propList.add("REF");
+
 
 
 
