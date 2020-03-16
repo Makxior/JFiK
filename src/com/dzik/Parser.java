@@ -48,28 +48,28 @@ public class Parser {
         return tokens.size()+1;
     }
     private int schemaCheck(int i){
-            if(tokens.get(i+1).keyword.equals("COLON")){
+        if(tokens.get(i+1).keyword.equals("COLON")){
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
                 i++;
-                if(tokens.get(i+1).keyword.equals("SPACE")){
+                if(tokens.get(i+1).keyword.equals("LINK")){
                     i++;
-                    if(tokens.get(i+1).keyword.equals("LINK")){
-                        i++;
-                        if(elementsList.contains(tokens.get(i+2).keyword)){
-                            if(tokens.get(i+1).keyword.equals("COMMA")){
-                                i++;
-                                return i;
-                            }
+                    if(elementsList.contains(tokens.get(i+2).keyword)){
+                        if(tokens.get(i+1).keyword.equals("COMMA")){
+                            i++;
+                            return i;
                         }
-                        else return i;
-
                     }
-                    else{
-                        System.out.println("schemaCheck error");
-                        errors.add("Error w SCHEMA check");
-                    }
+                    else return i;
 
                 }
+                else{
+                    System.out.println("schemaCheck error");
+                    errors.add("Error w SCHEMA check");
+                }
+
             }
+        }
 
         System.out.println("schemaCheck error");
         errors.add("Error w SCHEMA check");
@@ -149,24 +149,24 @@ public class Parser {
                         }
                         //rekurencja - sprawdzanie poprawnosci COMMA->SPACE->STRING wiele razy
                         else if(tokens.get(i+1).keyword.equals("COMMA")){
-                                      i = reqDeepCheck(i);
-                                      if(tokens.get(i+1).keyword.equals("SRPAREN")){
-                                          i++;
+                            i = reqDeepCheck(i);
+                            if(tokens.get(i+1).keyword.equals("SRPAREN")){
+                                i++;
 
-                                          if(elementsList.contains(tokens.get(i+2).keyword)){
-                                              if(tokens.get(i+1).keyword.equals("COMMA")){
-                                                  i++;
-                                                  return i;
+                                if(elementsList.contains(tokens.get(i+2).keyword)){
+                                    if(tokens.get(i+1).keyword.equals("COMMA")){
+                                        i++;
+                                        return i;
 
-                                              }
-                                              else{
-                                                  System.out.println("reqCheck1 error");
-                                                  errors.add("Error w REQUIRED check");
-                                              }
+                                    }
+                                    else{
+                                        System.out.println("reqCheck1 error");
+                                        errors.add("Error w REQUIRED check");
+                                    }
 
 
-                                          }
-                                      }
+                                }
+                            }
                         }
                     }
                 }
@@ -229,8 +229,10 @@ public class Parser {
                                 if(tokens.get(i+1).keyword.equals("BLPAREN")){
                                     i++;
                                     if(tokens.get(i+1).keyword.equals("TYPE") || tokens.get(i+1).keyword.equals("PROPERTIES")){
+                                        boolean ifTYPE = tokens.get(i+1).keyword.equals("TYPE");
                                         i = defDeepCheck(i);
-                                        if(tokens.get(i+1).keyword.equals("BRPAREN")){
+                                        if((tokens.get(i+1).keyword.equals("BRPAREN") || ifTYPE)){
+                                            if(ifTYPE) i--;
                                             i++;
                                             if(elementsList.contains(tokens.get(i+2).keyword)){
                                                 if(tokens.get(i+1).keyword.equals("COMMA")){
@@ -290,42 +292,42 @@ public class Parser {
 
     private int propCheck(int i){
 
-            if(tokens.get(i+1).keyword.equals("COLON")){
+        if(tokens.get(i+1).keyword.equals("COLON")){
+            i++;
+            if(tokens.get(i+1).keyword.equals("SPACE")){
                 i++;
-                if(tokens.get(i+1).keyword.equals("SPACE")){
+                if(tokens.get(i+1).keyword.equals("BLPAREN")){
                     i++;
-                    if(tokens.get(i+1).keyword.equals("BLPAREN")){
+                    if(tokens.get(i+1).keyword.equals("STRING")){
                         i++;
-                        if(tokens.get(i+1).keyword.equals("STRING")){
+                        if(tokens.get(i+1).keyword.equals("COLON")){
                             i++;
-                            if(tokens.get(i+1).keyword.equals("COLON")){
+                            if(tokens.get(i+1).keyword.equals("SPACE")){
                                 i++;
-                                if(tokens.get(i+1).keyword.equals("SPACE")){
+                                if(tokens.get(i+1).keyword.equals("BLPAREN")) {
                                     i++;
-                                    if(tokens.get(i+1).keyword.equals("BLPAREN")) {
+                                    i = propMultiChoice(i);
+                                    if (tokens.get(i + 1).keyword.equals("BRPAREN")) {
                                         i++;
-                                        i = propMultiChoice(i);
-                                        if (tokens.get(i + 1).keyword.equals("BRPAREN")) {
-                                            i++;
-                                            if (elementsList.contains(tokens.get(i + 2).keyword)) {
-                                                if (tokens.get(i + 1).keyword.equals("COMMA")) {
-                                                    i++;
-                                                    return i;
-                                                }
+                                        if ((elementsList.contains(tokens.get(i + 2).keyword)) || (tokens.get(i + 2).keyword.equals("STRING"))) {
+                                            if (tokens.get(i + 1).keyword.equals("COMMA")) {
+                                                i++;
+                                                return i;
                                             }
-
-
-                                        } else if (!tokens.get(i + 1).keyword.equals("BRPAREN")) {
-                                            return i;
                                         }
+
+
+                                    } else if (!tokens.get(i + 1).keyword.equals("BRPAREN")) {
+                                        return i;
                                     }
                                 }
+                            }
 
-                            }
-                            }
+                        }
                     }
                 }
             }
+        }
 
         System.out.println("propCheck error");
         errors.add("Error w PROPERTIES check");
@@ -496,15 +498,15 @@ public class Parser {
                         i++;
                         if(tokens.get(i+1).keyword.equals("COMMA")){
                             i = propEnum2(i);
-                           }else if(tokens.get(i+1).keyword.equals("SRPAREN")){
-                                     i++;
-                                        if (elementsList.contains(tokens.get(i + 2).keyword)) {
-                                              if (tokens.get(i + 1).keyword.equals("COMMA")) {
-                                                  i++;
-                                                    return i;
-                                                    }
-                                                }
-                                         }
+                        }else if(tokens.get(i+1).keyword.equals("SRPAREN")){
+                            i++;
+                            if (elementsList.contains(tokens.get(i + 2).keyword)) {
+                                if (tokens.get(i + 1).keyword.equals("COMMA")) {
+                                    i++;
+                                    return i;
+                                }
+                            }
+                        }
                     }
 
 
@@ -604,17 +606,29 @@ public class Parser {
         propList.add("REF");
 
 
-
-
         System.out.println("\nMoje rozwiaznie");
 
-        //pozbycie sie nadmiaru spacji
+        /*pozbycie sie nadmiaru spacji
         for(int i = 0; i < tokens.size()-1; i++)
         {
             if(tokens.get(i).keyword.equals(tokens.get(i+1).keyword) && tokens.get(i).keyword.equals("SPACE"))
             {
                 //System.out.println(tokens.get(i).keyword);
                 tokens.remove(i+1);
+                i--;
+            }
+        } */
+        //pozbycie sie nadmiaru spacji 2.0
+        for(int i = 0; i < tokens.size()-1; i++)
+        {
+            if(tokens.get(i).keyword.equals("SLPAREN")){
+                while (!(tokens.get(i).keyword.equals("SRPAREN"))){
+                    i++;
+                }
+            }
+            if(tokens.get(i).keyword.equals("SPACE") && (!(tokens.get(i-1).keyword.equals("COLON"))))
+            {
+                tokens.remove(i);
                 i--;
             }
         }
