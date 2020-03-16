@@ -27,19 +27,16 @@ public class Parser {
                 if(tokens.get(i+1).keyword.equals("LINK")){
                     i++;
                     if(elementsList.contains(tokens.get(i+2).keyword)){
-                        if(tokens.get(i+1).keyword == "COMMA"){
+                        if(tokens.get(i + 1).keyword.equals("COMMA")){
                             i++;
                             return i;
-
                         }
                         else{
                             System.out.println("idCheck error");
                             errors.add("Error w ID check");
                         }
-
                     }
                     else return i;
-
                 }
             }
         }
@@ -61,16 +58,13 @@ public class Parser {
                         }
                     }
                     else return i;
-
                 }
                 else{
                     System.out.println("schemaCheck error");
                     errors.add("Error w SCHEMA check");
                 }
-
             }
         }
-
         System.out.println("schemaCheck error");
         errors.add("Error w SCHEMA check");
         return tokens.size()+1;
@@ -94,7 +88,6 @@ public class Parser {
                     System.out.println("titleCheck error");
                     errors.add("Error w TITLE check");
                 }
-
             }
         }
 
@@ -232,8 +225,7 @@ public class Parser {
                                         boolean ifTYPE = tokens.get(i+1).keyword.equals("TYPE");
                                         i = defDeepCheck(i);
                                         if((tokens.get(i+1).keyword.equals("BRPAREN") || ifTYPE)){
-                                            if(ifTYPE) i--;
-                                            i++;
+                                            if(!(ifTYPE)) i++;
                                             if(elementsList.contains(tokens.get(i+2).keyword)){
                                                 if(tokens.get(i+1).keyword.equals("COMMA")){
                                                     i++;
@@ -606,8 +598,6 @@ public class Parser {
         propList.add("REF");
 
 
-        System.out.println("\nMoje rozwiaznie");
-
         /*pozbycie sie nadmiaru spacji
         for(int i = 0; i < tokens.size()-1; i++)
         {
@@ -632,10 +622,10 @@ public class Parser {
                 i--;
             }
         }
-        for(Skaner.Token token : tokens) {
+        /*for(Skaner.Token token : tokens) {
             System.out.print(token.keyword+" ");
         }
-        System.out.println("\n");
+        System.out.println("\n");*/
 
         //sprawdzenie poprawnosci start i end
         if(tokens.get(0).keyword != "BLPAREN" || tokens.get(tokens.size()-1).keyword != "EOF"){
@@ -670,36 +660,7 @@ public class Parser {
             //return 0;
         }
 
-
-
         check();
         return 0;
     }
 }
-
-//
-//"{"  "BLPAREN"
-//"}" "BRPAREN"
-//"["  "SLPAREN"
-//"]"  "SRPAREN"
-//"$schema"  "SCHEMA"
-//"$id"  "ID"
-//":"  "COLON"
-// "  "SPACE"
-//"  "  "COMMA"
-//"title"  "TITLE"
-//"type"  "TYPE"
-//"properties"  "PROPERTIES"
-//"description"  "DESCRIPTION"
-//"required"  "REQUIRED"
-//"minLength"  "MINLENGTH"
-//"maxLength"  "MAXLENGTH"
-//"minimum"  "MINIMUM"
-//"maximum"  "MAXIMUM"
-//"enum" "ENUM"
-//"$ref"  "REF"
-//"definitions"  "DEFINITIONS"
-//"link"  "LINK"
-//"address"  "ADDRESS"
-//"string"  "STRING"
-//"eof"  "EOF"

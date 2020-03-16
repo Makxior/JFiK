@@ -85,6 +85,7 @@ public class Skaner {
             }
             else{
                 System.out.println("Error in reading input in Skaner");
+                System.exit(-1);
                 break;
             }
 
