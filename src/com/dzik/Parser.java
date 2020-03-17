@@ -33,7 +33,7 @@ public class Parser {
                         }
                         else{
                             System.out.println("idCheck error");
-                            errors.add("Error w ID check");
+                            System.exit(-1);
                         }
                     }
                     else return i;
@@ -41,7 +41,7 @@ public class Parser {
             }
         }
         System.out.println("idCheck error");
-        errors.add("Error w ID check");
+        System.exit(-1);
         return tokens.size()+1;
     }
     private int schemaCheck(int i){
@@ -61,12 +61,12 @@ public class Parser {
                 }
                 else{
                     System.out.println("schemaCheck error");
-                    errors.add("Error w SCHEMA check");
+                    System.exit(-1);
                 }
             }
         }
         System.out.println("schemaCheck error");
-        errors.add("Error w SCHEMA check");
+        System.exit(-1);
         return tokens.size()+1;
     }
     private int titleCheck(int i){
@@ -86,13 +86,13 @@ public class Parser {
                 }
                 else{
                     System.out.println("titleCheck error");
-                    errors.add("Error w TITLE check");
+                    System.exit(-1);
                 }
             }
         }
 
         System.out.println("titleCheck error");
-        errors.add("Error w TITLE check");
+        System.exit(-1);
         return tokens.size()+1;
     }
 
@@ -117,7 +117,7 @@ public class Parser {
             }
         }
         System.out.println("reqDeepCheck error");
-        errors.add("Error w REQUIRED deep check");
+        System.exit(-1);
 
         return tokens.size()+1;
     }
@@ -154,7 +154,7 @@ public class Parser {
                                     }
                                     else{
                                         System.out.println("reqCheck1 error");
-                                        errors.add("Error w REQUIRED check");
+                                        System.exit(-1);
                                     }
 
 
@@ -165,15 +165,15 @@ public class Parser {
                 }
                 else{
                     System.out.println("reqCheck2 error");
-                    errors.add("Error w REQUIRED check");
+                    System.exit(-1);
                 }
 
             }
         }
 
         System.out.println("reqCheck3 error");
-        errors.add("Error w REQUIRED check");
-        return tokens.size()+1;
+        System.exit(-1);
+        return 0;
     }
 
     private int typeCheck(int i){
@@ -190,7 +190,7 @@ public class Parser {
                         }
                         else{
                             System.out.println("typeCheck error");
-                            errors.add("Error w TYPE check");
+                            System.exit(-1);
                         }
 
                     }else{
@@ -201,7 +201,7 @@ public class Parser {
             }
         }
         System.out.println("typeCheck error");
-        errors.add("Error w TYPE check");
+        System.exit(-1);
         return tokens.size()+1;
 
     }
@@ -234,7 +234,7 @@ public class Parser {
                                                 }
                                                 else{
                                                     System.out.println("defCheck error");
-                                                    errors.add("Error w DEFINITION check");
+                                                    System.exit(-1);
                                                 }
 
                                             }
@@ -255,7 +255,7 @@ public class Parser {
             }
         }
         System.out.println("defCheck error");
-        errors.add("Error w DEFINITION check");
+        System.exit(-1);
         return tokens.size()+1;
 
     }
@@ -278,7 +278,7 @@ public class Parser {
             propCheck(i);
 
         }
-        errors.add("Error w DEFINITION deep check");
+        System.exit(-1);
         return tokens.size()+1;
     }
 
@@ -290,41 +290,57 @@ public class Parser {
                 i++;
                 if(tokens.get(i+1).keyword.equals("BLPAREN")){
                     i++;
-                    if(tokens.get(i+1).keyword.equals("STRING")){
+                    i = propCheckDeep(i);
+                    if (tokens.get(i + 1).keyword.equals("BRPAREN")) {
                         i++;
-                        if(tokens.get(i+1).keyword.equals("COLON")){
-                            i++;
-                            if(tokens.get(i+1).keyword.equals("SPACE")){
+                        if ((elementsList.contains(tokens.get(i + 2).keyword)) || (tokens.get(i + 2).keyword.equals("STRING"))) {
+                            if (tokens.get(i + 1).keyword.equals("COMMA")) {
                                 i++;
-                                if(tokens.get(i+1).keyword.equals("BLPAREN")) {
-                                    i++;
-                                    i = propMultiChoice(i);
-                                    if (tokens.get(i + 1).keyword.equals("BRPAREN")) {
-                                        i++;
-                                        if ((elementsList.contains(tokens.get(i + 2).keyword)) || (tokens.get(i + 2).keyword.equals("STRING"))) {
-                                            if (tokens.get(i + 1).keyword.equals("COMMA")) {
-                                                i++;
-                                                return i;
-                                            }
-                                        }
-
-
-                                    } else if (!tokens.get(i + 1).keyword.equals("BRPAREN")) {
-                                        return i;
-                                    }
+                                while(tokens.get(i + 1).keyword.equals("STRING") || tokens.get(i + 3).keyword.equals("STRING")){
+                                    if(tokens.get(i + 3).keyword.equals("STRING")) i+=2;
+                                    i = propCheckDeep(i);
                                 }
+                                return i;
                             }
-
                         }
+
+                    } else if (!tokens.get(i + 1).keyword.equals("BRPAREN")) {
+                        return i;
                     }
                 }
             }
         }
 
         System.out.println("propCheck error");
-        errors.add("Error w PROPERTIES check");
+        System.exit(-1);
         return tokens.size()+1;
 
+    }
+
+    private int propCheckDeep(int i) {
+        if((tokens.get(i+1).keyword.equals("STRING"))){
+            i++;
+            if((tokens.get(i+1).keyword.equals("COLON"))|| (tokens.get(i+1).keyword.equals("BLPAREN"))){
+                i++;
+                if((tokens.get(i+1).keyword.equals("SPACE"))|| (tokens.get(i+1).keyword.equals("REF"))){
+                    if(tokens.get(i+1).keyword.equals("REF")){
+                        i-=2;
+                    }
+                    i++;
+                    if(tokens.get(i+1).keyword.equals("BLPAREN")) {
+                        i++;
+                        i = propMultiChoice(i);
+                        while(tokens.get(i).keyword.equals("COMMA")) {
+                            i = propMultiChoice(i);
+                        }
+                        return i;
+                    }
+                }
+
+            }
+        }
+        System.exit(-1);
+        return tokens.size()+1;
     }
 
     private int propMultiChoice(int i){
@@ -332,13 +348,13 @@ public class Parser {
         switch(tokens.get(i+1).keyword)
         {
             case "TYPE": i = propType(i+1);return i;
-            case "DESCRIPTION": i = propDesc(i);return i;
-            case "MINIMUM": i = propMin(i);return i;
-            case "MAXIMUM": i = propMax(i);return i;
-            case "MINLENGTH": i = propMinLen(i);return i;
-            case "MAXLENGTH": i = propMaxLen(i);return i;
-            case "ENUM": i = propEnum(i);return i;
-            case "REF": i = propRef(i);return i;
+            case "DESCRIPTION": i = propDesc(i+1);return i;
+            case "MINIMUM": i = propMin(i+1);return i;
+            case "MAXIMUM": i = propMax(i+1);return i;
+            case "MINLENGTH": i = propMinLen(i+1);return i;
+            case "MAXLENGTH": i = propMaxLen(i+1);return i;
+            case "ENUM": i = propEnum(i+1);return i;
+            case "REF": i = propRef(i+1);return i;
             default: break;
 
         }
@@ -365,7 +381,7 @@ public class Parser {
                 }
             }
         }
-        errors.add("Error w propType check");
+        System.exit(-1);
         return tokens.size()+1;
     }
 
@@ -388,7 +404,7 @@ public class Parser {
                 }
             }
         }
-        errors.add("Error w propDesc check");
+        System.exit(-1);
         return tokens.size()+1;
     }
     private int propMin(int i){
@@ -410,7 +426,9 @@ public class Parser {
                 }
             }
         }
-        errors.add("Error w propMin check");
+        System.exit(-1);
+        System.out.println("Error w propMin check");
+        System.exit(-1);
         return tokens.size()+1;
     }
     private int propMax(int i){
@@ -454,7 +472,7 @@ public class Parser {
                 }
             }
         }
-        errors.add("Error w propMinLen check");
+        System.exit(-1);
         return tokens.size()+1;
     }
     private int propMaxLen(int i){
@@ -476,7 +494,7 @@ public class Parser {
                 }
             }
         }
-        errors.add("Error w propMaxLen check");
+        System.exit(-1);
         return tokens.size()+1;
     }
     private int propEnum(int i){
@@ -490,6 +508,7 @@ public class Parser {
                         i++;
                         if(tokens.get(i+1).keyword.equals("COMMA")){
                             i = propEnum2(i);
+                            return i+1;
                         }else if(tokens.get(i+1).keyword.equals("SRPAREN")){
                             i++;
                             if (elementsList.contains(tokens.get(i + 2).keyword)) {
@@ -505,7 +524,8 @@ public class Parser {
                 }
             }
         }
-        errors.add("Error w ENUM check");
+        System.out.println("Enum error");
+        System.exit(-1);
         return tokens.size()+1;
     }
     private int propRef(int i){
@@ -527,7 +547,7 @@ public class Parser {
                 }
             }
         }
-        errors.add("Error w propRef check");
+        System.exit(-1);
         return tokens.size()+1;
     }
 
@@ -549,7 +569,7 @@ public class Parser {
             }
         }
 
-        errors.add("Error w propEnum2 check");
+        System.exit(-1);
         return tokens.size()+1;
     }
 
@@ -622,10 +642,10 @@ public class Parser {
                 i--;
             }
         }
-        /*for(Skaner.Token token : tokens) {
+        for(Skaner.Token token : tokens) {
             System.out.print(token.keyword+" ");
         }
-        System.out.println("\n");*/
+        System.out.println("\n");
 
         //sprawdzenie poprawnosci start i end
         if(tokens.get(0).keyword != "BLPAREN" || tokens.get(tokens.size()-1).keyword != "EOF"){

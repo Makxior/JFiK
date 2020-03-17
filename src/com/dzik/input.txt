@@ -12,7 +12,7 @@
     "age": {
       "description": "The person's age.",
       "type": "integer",
-      "minimum": 0
+      "minimum": 5
     },
     "gender": {
       "description": "The person's gender",
