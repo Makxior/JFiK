@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) throws Exception{
         String temp;
         String Input="";
-        File file = new File("src\\com\\dzik\\input.txt"); //
+        File file = new File("src\\com\\dzik\\input.txt"); //wczytywanie z pliku
         BufferedReader br = new BufferedReader(new FileReader(file));
         while (( temp = br.readLine()) != null){
             Input +=temp;

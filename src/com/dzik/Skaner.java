@@ -44,9 +44,9 @@ public class Skaner {
         }
     }
 
-    public static List<Token> lex(String input) { //tutaj najważniejsza funkcja
+    public static List<Token> lex(String input) { //najważniejsza funkcja
         List<Token> result = new ArrayList<>();
-        String temp="";
+        String temp;
         for(int i = 0; i < input.length(); ) { //zwiekszamy w zaleznosci od dlugosci odczytanego tokena
             temp="";
             if(input.charAt(i) == '{' || input.charAt(i) == '}' || input.charAt(i) == '[' || input.charAt(i) ==']' ||input.charAt(i) ==' ' || input.charAt(i) ==':'|| input.charAt(i)==','){
