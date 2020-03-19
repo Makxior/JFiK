@@ -1,9 +1,6 @@
 package com.dzik;
 
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Skaner {
     public static Map<String,String> Keyword_value = new TreeMap<>();
@@ -45,6 +42,7 @@ public class Skaner {
     }
 
     public static List<Token> lex(String input) { //najważniejsza funkcja
+        Scanner scanner = new Scanner(System.in);
         List<Token> result = new ArrayList<>();
         String temp;
         for(int i = 0; i < input.length(); ) { //zwiekszamy w zaleznosci od dlugosci odczytanego tokena
@@ -71,7 +69,7 @@ public class Skaner {
                     result.add(new Token(temp, Keyword_value.get(temp)));
                 }
                 else{
-                    if(temp.matches("^(https?|ftp)://.*$")){ //tutaj mozna te regexy ulepszyc
+                    if(temp.matches("^(https?|ftp)://.*$")){
                         result.add(new Token(temp, "LINK"));
                     }
                     else if(temp.matches("#/.*$"))
@@ -85,6 +83,7 @@ public class Skaner {
             }
             else{
                 System.out.println("Error in reading input in Skaner");
+                scanner.nextLine();
                 System.exit(-1);
                 break;
             }

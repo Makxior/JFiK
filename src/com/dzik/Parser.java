@@ -2,8 +2,10 @@ package com.dzik;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Parser {
+    Scanner scanner = new Scanner(System.in);
     List<Skaner.Token> tokens;
     List<String> elementsList = new ArrayList<>();
     List<String> propList = new ArrayList<>();
@@ -29,14 +31,14 @@ public class Parser {
                             return i;
                         } else {
                             System.out.println("Błąd w ID");
-                            System.exit(-1);
+                            scanner.nextLine(); System.exit(-1);
                         }
                     } else return i;
                 }
             }
         }
         System.out.println("Błąd w ID");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -55,12 +57,12 @@ public class Parser {
                     } else return i;
                 } else {
                     System.out.println("Błąd w SCHEMA");
-                    System.exit(-1);
+                    scanner.nextLine(); System.exit(-1);
                 }
             }
         }
         System.out.println("Błąd w SCHEMA");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -80,13 +82,13 @@ public class Parser {
 
                 } else {
                     System.out.println("Błąd w TITLE");
-                    System.exit(-1);
+                    scanner.nextLine(); System.exit(-1);
                 }
             }
         }
 
         System.out.println("Błąd w TITLE");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -109,7 +111,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w REQUIRED");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
 
         return tokens.size() + 1;
     }
@@ -140,7 +142,7 @@ public class Parser {
 
                                     } else {
                                         System.out.println("Błąd w REQUIRED");
-                                        System.exit(-1);
+                                        scanner.nextLine(); System.exit(-1);
                                     }
 
 
@@ -150,14 +152,14 @@ public class Parser {
                     }
                 } else {
                     System.out.println("Błąd w REQUIRED");
-                    System.exit(-1);
+                    scanner.nextLine(); System.exit(-1);
                 }
 
             }
         }
 
         System.out.println("Błąd w REQUIRED");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return 0;
     }
 
@@ -174,7 +176,7 @@ public class Parser {
                             return i;
                         } else {
                             System.out.println("Błąd w TYPE");
-                            System.exit(-1);
+                            scanner.nextLine(); System.exit(-1);
                         }
 
                     } else {
@@ -185,7 +187,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w TYPE");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
 
     }
@@ -217,7 +219,7 @@ public class Parser {
 
                                                 } else {
                                                     System.out.println("Błąd w DEFINITIONS");
-                                                    System.exit(-1);
+                                                    scanner.nextLine(); System.exit(-1);
                                                 }
 
                                             } else return i;
@@ -237,7 +239,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w DEFINITIONS");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
 
     }
@@ -262,7 +264,7 @@ public class Parser {
 
         }
         System.out.println("Błąd w DEFINITIONS");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -296,7 +298,7 @@ public class Parser {
         }
 
         System.out.println("Błąd w PROPERTIES");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
 
     }
@@ -324,7 +326,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w PROPERTIES");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -383,7 +385,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w TYPE");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -407,7 +409,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w PROPERTIES");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -431,7 +433,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w MINIMUM");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -455,7 +457,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w MAXIMUM");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -479,7 +481,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w MINLENGTH");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -503,7 +505,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w MAXLENGTH");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -535,7 +537,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w ENUM");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -559,7 +561,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w REF");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -581,7 +583,7 @@ public class Parser {
             }
         }
         System.out.println("Błąd w ENUM");
-        System.exit(-1);
+        scanner.nextLine(); System.exit(-1);
         return tokens.size() + 1;
     }
 
@@ -656,16 +658,10 @@ public class Parser {
             }
         }
 
-        /*
-        for(Skaner.Token token : tokens) {
-            System.out.print(token.keyword+" ");
-        }
-        System.out.println("\n"); */
-
         //sprawdzenie poprawnosci start i end
         if (!tokens.get(0).keyword.equals("BLPAREN") || !tokens.get(tokens.size() - 1).keyword.equals("EOF")) {
             System.out.println("Brakuje \"{\" na początku programu lub EOF na końcu ");
-            System.exit(-1);
+            scanner.nextLine(); System.exit(-1);
         }
 
         //sprawdzenie liczby klamr { }
@@ -677,8 +673,8 @@ public class Parser {
                 counter--;
         }
         if (counter != 0) {
-            System.out.println("Brakuje \"{\" lub \"}\"");
-            System.exit(-1);
+            System.out.println("Zła ilość \"{\" lub \"}\"");
+            scanner.nextLine(); System.exit(-1);
         }
 
 
@@ -692,7 +688,7 @@ public class Parser {
         }
         if (counter != 0) {
             System.out.println("Brakuje \"[\" lub \"]\"");
-            System.exit(-1);
+            scanner.nextLine(); System.exit(-1);
         }
 
         check();

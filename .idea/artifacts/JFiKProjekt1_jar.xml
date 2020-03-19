@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JFiKProjekt1:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JFiKProjekt1_jar</output-path>
+    <root id="archive" name="JFiKProjekt1.jar">
+      <element id="module-output" name="JFiKProjekt1" />
+    </root>
+  </artifact>
+</component>
